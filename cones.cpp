@@ -39,9 +39,6 @@ int main(int arg,char **argv){
   std::vector<std::string> filenames;
   std::vector<double> redshifts(1,0.0);
   
-  //filenames.push_back("file_example.dat");
-  //redshifts.push_back(0.1);
-  
   std::string dir = "../Catalogs/";
   
   filenames.push_back(dir +"out_80p_unweight.list");  // snapshot
@@ -95,6 +92,12 @@ int main(int arg,char **argv){
   filenames.push_back(dir +"out_7p_unweight.list");
   redshifts.push_back(3.0);
   
+  
+  //filenames.clear();
+  //filenames.push_back("file_example.dat");
+  //redshifts.resize(2);
+  //redshifts[1] = 0.1;
+  
   // shift the redshifts to between the snapshots
   for(int i=1;i<redshifts.size()-1;++i){
     redshifts[i] = 0.5*(redshifts[i] + redshifts[i+1]);
@@ -104,9 +107,10 @@ int main(int arg,char **argv){
   Utilities::RandomNumbers_NR ran(-1928376);
   
   // random observer in the box
-  xo[0] = ran();
-  xo[1] = ran();
-  xo[2] = ran();
+  double boxwidth = 1.0e3;
+  xo[0] = ran()*boxwidth;
+  xo[1] = ran()*boxwidth;
+  xo[2] = ran()*boxwidth;
   
   // random direction
   v[0] = ran.gauss();

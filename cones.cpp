@@ -39,60 +39,60 @@ int main(int arg,char **argv){
   std::vector<std::string> filenames;
   std::vector<double> redshifts(1,0.0);
   
-  std::string dir = "../Catalogs/";
+  std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/ROCKSTAR/";
   
-  filenames.push_back(dir +"out_80p_unweight.list");  // snapshot
+  filenames.push_back(dir +"out_80p.list");  // snapshot
   redshifts.push_back(0.04603);                       // maximum redshift
-  filenames.push_back(dir +"out_77p_unweight.list");
+  filenames.push_back(dir +"out_77p.list");
   redshifts.push_back(0.1058);
-  filenames.push_back(dir +"out_74p_unweight.list");
+  filenames.push_back(dir +"out_74p.list");
   redshifts.push_back(0.1131);
-  filenames.push_back(dir +"out_73p_unweight.list");
+  filenames.push_back(dir +"out_73p.list");
   redshifts.push_back(0.1636);
-  filenames.push_back(dir +"out_64p_unweight.list");
+  filenames.push_back(dir +"out_64p.list");
   redshifts.push_back(0.2279);
-  filenames.push_back(dir +"out_54p_unweight.list");
+  filenames.push_back(dir +"out_54p.list");
   redshifts.push_back(0.2464);
-  filenames.push_back(dir +"out_52p_unweight.list");
+  filenames.push_back(dir +"out_52p.list");
   redshifts.push_back(0.2849);
-  filenames.push_back(dir +"out_49p_unweight.list");
+  filenames.push_back(dir +"out_49p.list");
   redshifts.push_back(0.3256);
-  filenames.push_back(dir +"out_46p_unweight.list");
+  filenames.push_back(dir +"out_46p.list");
   redshifts.push_back(0.3581);
-  filenames.push_back(dir +"out_44p_unweight.list");
+  filenames.push_back(dir +"out_44p.list");
   redshifts.push_back(0.4156);
-  filenames.push_back(dir +"out_40p_unweight.list");
+  filenames.push_back(dir +"out_40p.list");
   redshifts.push_back(0.4916);
-  filenames.push_back(dir +"out_34p_unweight.list");
+  filenames.push_back(dir +"out_34p.list");
   redshifts.push_back(0.5053);
-  filenames.push_back(dir +"out_33p_unweight.list");
+  filenames.push_back(dir +"out_33p.list");
   redshifts.push_back(0.547);
-  filenames.push_back(dir +"out_30p_unweight.list");
+  filenames.push_back(dir +"out_30p.list");
   redshifts.push_back(0.5618);
-  filenames.push_back(dir +"out_29p_unweight.list");
+  filenames.push_back(dir +"out_29p.list");
   redshifts.push_back(0.6383);
-  filenames.push_back(dir +"out_24p_unweight.list");
+  filenames.push_back(dir +"out_24p.list");
   redshifts.push_back(0.6714);
-  filenames.push_back(dir +"out_22p_unweight.list");
+  filenames.push_back(dir +"out_22p.list");
   redshifts.push_back(0.7053);
-  filenames.push_back(dir +"out_20p_unweight.list");
+  filenames.push_back(dir +"out_20p.list");
   redshifts.push_back(0.7232);
-  filenames.push_back(dir +"out_19p_unweight.list");
+  filenames.push_back(dir +"out_19p.list");
   redshifts.push_back(0.7976);
-  filenames.push_back(dir +"out_15p_unweight.list");
+  filenames.push_back(dir +"out_15p.list");
   redshifts.push_back(1.0);
-  filenames.push_back(dir +"out_11p_unweight.list");
+  filenames.push_back(dir +"out_11p.list");
   redshifts.push_back(1.445);
-  filenames.push_back(dir +"out_10p_unweight.list");
+  filenames.push_back(dir +"out_10p.list");
   redshifts.push_back(2.145);
-  filenames.push_back(dir +"out_9p_unweight.list");
+  filenames.push_back(dir +"out_9p.list");
   redshifts.push_back(2.484);
-  filenames.push_back(dir +"out_8p_unweight.list");
+  filenames.push_back(dir +"out_8p.list");
   redshifts.push_back(2.891);
-  filenames.push_back(dir +"out_7p_unweight.list");
+  filenames.push_back(dir +"out_7p.list");
   redshifts.push_back(3.0);
   
-  
+  // *** for tests ***
   //filenames.clear();
   //filenames.push_back("file_example.dat");
   //redshifts.resize(2);
@@ -107,7 +107,7 @@ int main(int arg,char **argv){
   Utilities::RandomNumbers_NR ran(-1928376);
   
   // random observer in the box
-  double boxwidth = 1.0e3;
+  double boxwidth = 3.688948e3;
   xo[0] = ran()*boxwidth;
   xo[1] = ran()*boxwidth;
   xo[2] = ran()*boxwidth;
@@ -121,6 +121,7 @@ int main(int arg,char **argv){
   time(&to);
   for(int i=0 ; i < filenames.size() ; ++i){
     
+    std::cout << "Reading from catalog: " << filenames[i] << std::endl;
     cone.ReadBoxRockStar(filenames[i],xo,v
                          ,cosmo.coorDist(redshifts[i])
                          ,cosmo.coorDist(redshifts[i+1])

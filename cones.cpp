@@ -32,54 +32,52 @@ int main(int arg,char **argv){
   COSMOLOGY cosmo(Planck1yr);
   Point_3d xo,v;
   
-  std::vector<LightCone::DataRockStar> conehalos;
-  conehalos.reserve(100000);
-  LightCone cone(degreesTOradians);
-  
   std::vector<std::string> filenames;
   std::vector<double> redshifts(1,0.0);
   
   std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/ROCKSTAR/";
   
-  filenames.push_back(dir +"out_80p.list");  // snapshot
+  //filenames.push_back(dir +"out_80p.list");  // snapshot
   redshifts.push_back(0.04603);                       // maximum redshift
   filenames.push_back(dir +"out_77p.list");
-  redshifts.push_back(0.1058);
-  filenames.push_back(dir +"out_74p.list");
+  //redshifts.push_back(0.1058);
+  //filenames.push_back(dir +"out_74p.list");
   redshifts.push_back(0.1131);
   filenames.push_back(dir +"out_73p.list");
   redshifts.push_back(0.1636);
   filenames.push_back(dir +"out_64p.list");
   redshifts.push_back(0.2279);
   filenames.push_back(dir +"out_54p.list");
-  redshifts.push_back(0.2464);
-  filenames.push_back(dir +"out_52p.list");
+  //redshifts.push_back(0.2464);
+  //filenames.push_back(dir +"out_52p.list");
   redshifts.push_back(0.2849);
   filenames.push_back(dir +"out_49p.list");
   redshifts.push_back(0.3256);
-  filenames.push_back(dir +"out_46p.list");
-  redshifts.push_back(0.3581);
+  //filenames.push_back(dir +"out_46p.list");
+  //redshifts.push_back(0.3581);
   filenames.push_back(dir +"out_44p.list");
   redshifts.push_back(0.4156);
   filenames.push_back(dir +"out_40p.list");
   redshifts.push_back(0.4916);
   filenames.push_back(dir +"out_34p.list");
-  redshifts.push_back(0.5053);
-  filenames.push_back(dir +"out_33p.list");
-  redshifts.push_back(0.547);
-  filenames.push_back(dir +"out_30p.list");
+  //redshifts.push_back(0.5053);
+  //filenames.push_back(dir +"out_33p.list");
+  //redshifts.push_back(0.547);
+  //filenames.push_back(dir +"out_30p.list");
   redshifts.push_back(0.5618);
   filenames.push_back(dir +"out_29p.list");
   redshifts.push_back(0.6383);
   filenames.push_back(dir +"out_24p.list");
-  redshifts.push_back(0.6714);
-  filenames.push_back(dir +"out_22p.list");
+  //redshifts.push_back(0.6714);
+  //filenames.push_back(dir +"out_22p.list");
   redshifts.push_back(0.7053);
   filenames.push_back(dir +"out_20p.list");
-  redshifts.push_back(0.7232);
-  filenames.push_back(dir +"out_19p.list");
+  //redshifts.push_back(0.7232);
+  //filenames.push_back(dir +"out_19p.list");
   redshifts.push_back(0.7976);
   filenames.push_back(dir +"out_15p.list");
+  redshifts.push_back(0.8868);
+  filenames.push_back(dir +"out_12p.list");
   redshifts.push_back(1.0);
   filenames.push_back(dir +"out_11p.list");
   redshifts.push_back(1.445);
@@ -108,21 +106,38 @@ int main(int arg,char **argv){
   
   // random observer in the box
   double boxwidth = 3.688948e3;
-  xo[0] = ran()*boxwidth;
-  xo[1] = ran()*boxwidth;
-  xo[2] = ran()*boxwidth;
   
   // random direction
-  v[0] = ran.gauss();
-  v[1] = ran.gauss();
-  v[2] = ran.gauss();
+
+  const int Ncones = 5;
+  std::vector<Point_3d> observers(Ncones);
+  std::vector<Point_3d> directions(Ncones);
+  for(auto &xo : observers){
+    xo[0] = ran()*boxwidth;
+    xo[1] = ran()*boxwidth;
+    xo[2] = ran()*boxwidth;
+  }
+  for(auto &v : directions){
+    v[0] = ran.gauss();
+    v[1] = ran.gauss();
+    v[2] = ran.gauss();
+    v /= v.length();
+  }
   
+  
+  MultiLightCone mcone(degreesTOradians,observers,directions);
+  std::vector<std::vector<LightCone::DataRockStar> > conehalos;
+  for(auto &c : conehalos) c.reserve(100000);
+
+  //LightCone cone(degreesTOradians);
+
   
   time(&to);
   for(int i=0 ; i < filenames.size() ; ++i){
     
-    std::cout << "Reading from catalog: " << filenames[i] << std::endl;
-    cone.ReadBoxRockStar(filenames[i],xo,v
+    std::cout << "Reading from catalog: " << filenames[i] << " z = " << redshifts[i] << " to "
+    << redshifts[i+1] << std::endl;
+    mcone.ReadBoxRockStar(filenames[i]
                          ,cosmo.coorDist(redshifts[i])
                          ,cosmo.coorDist(redshifts[i+1])
                          ,conehalos);
@@ -130,8 +145,9 @@ int main(int arg,char **argv){
     std::cout << "Number of halos in the cone: " << conehalos.size() << std::endl;
   }
   
-  LightCone::WriteLightCone("cone_output", conehalos);
-  
+  for(int i=0;i<Ncones;++i){
+    LightCone::WriteLightCone("cone_output" + std::to_string(i) + ".csv", conehalos[i]);
+  }
   time(&t1);
   
   std::cout << "time for constructing cone : " << difftime(t1,to)/60 << " min"

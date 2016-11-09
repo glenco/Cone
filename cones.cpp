@@ -126,7 +126,7 @@ int main(int arg,char **argv){
   
   
   MultiLightCone mcone(degreesTOradians,observers,directions);
-  std::vector<std::vector<LightCone::DataRockStar> > conehalos;
+  std::vector<std::vector<LightCone::DataRockStar> > conehalos(Ncones);
   for(auto &c : conehalos) c.reserve(100000);
 
   //LightCone cone(degreesTOradians);

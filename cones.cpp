@@ -90,11 +90,6 @@ int main(int arg,char **argv){
   filenames.push_back(dir +"out_7p.list");
   redshifts.push_back(3.0);
   
-  // *** for tests ***
-  //filenames.clear();
-  //filenames.push_back("file_example.dat");
-  //redshifts.resize(2);
-  //redshifts[1] = 0.1;
   
   // shift the redshifts to between the snapshots
   for(int i=1;i<redshifts.size()-1;++i){
@@ -125,12 +120,35 @@ int main(int arg,char **argv){
   }
   
   
+  /**********************************************
+  // *** for tests ***
+  filenames.clear();
+  filenames.push_back("file_example.dat");
+  redshifts.resize(2);
+  redshifts[1] = 2.5;
+  // aim the first 4 cones at the first four halos
+  Point_3d tmp;
+  tmp[0]=3.54674; tmp[1] = 1.12347; tmp[2]=13.69941;
+  tmp /= 0.677700;
+  directions[0] = tmp - observers[0];
+  std::cout << " r = " << directions[0].length() << std::endl;
+  tmp[0]=0.92366; tmp[1] =  9.52555; tmp[2]= 16.51622;
+  tmp /= 0.677700;
+  directions[1] = tmp - observers[1];
+  std::cout << " r = " << directions[1].length() << std::endl;
+  tmp[0]=9.45172; tmp[1] =  3.61210; tmp[2]= 8.19601;
+  tmp /= 0.677700;
+  directions[2] = tmp - observers[2];
+  std::cout << " r = " << directions[2].length() << std::endl;
+  tmp[0]=3.42866; tmp[1] =  2.09676; tmp[2]= 13.78150;
+  tmp /= 0.677700;
+  directions[3] = tmp - observers[3];
+  std::cout << " r = " << directions[3].length() << std::endl;
+  // **********************************************/
+  
   MultiLightCone mcone(degreesTOradians,observers,directions);
   std::vector<std::vector<LightCone::DataRockStar> > conehalos(Ncones);
   for(auto &c : conehalos) c.reserve(100000);
-
-  //LightCone cone(degreesTOradians);
-
   
   time(&to);
   for(int i=0 ; i < filenames.size() ; ++i){
@@ -142,10 +160,10 @@ int main(int arg,char **argv){
                          ,cosmo.coorDist(redshifts[i+1])
                          ,conehalos);
     
-    std::cout << "Number of halos in the cone: " << conehalos.size() << std::endl;
   }
   
   for(int i=0;i<Ncones;++i){
+    std::cout << "Number of halos in the cones: " << conehalos[i].size() << std::endl;
     LightCone::WriteLightCone("cone_output" + std::to_string(i) + ".csv", conehalos[i]);
   }
   time(&t1);

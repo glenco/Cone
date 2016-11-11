@@ -97,7 +97,7 @@ int main(int arg,char **argv){
   }
   
   time_t to,t1;
-  Utilities::RandomNumbers_NR ran(-1928376);
+  Utilities::RandomNumbers_NR ran(12709432);
   
   // random observer in the box
   double boxwidth = 3.688948e3;
@@ -164,7 +164,7 @@ int main(int arg,char **argv){
   
   for(int i=0;i<Ncones;++i){
     std::cout << "Number of halos in the cones: " << conehalos[i].size() << std::endl;
-    LightCone::WriteLightCone("cone_output" + std::to_string(i) + ".csv", conehalos[i]);
+    LightCone::WriteLightCone("cone_output_p" + std::to_string(i) + ".csv", conehalos[i]);
   }
   time(&t1);
   

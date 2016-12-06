@@ -34,60 +34,36 @@ int main(int arg,char **argv){
   
   std::vector<std::string> filenames;
   std::vector<double> redshifts(1,0.0);
+  // random observer in the box
+  double boxwidth = 3.688948e3,hubble = 0.677700;
+
+  //std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/ROCKSTAR/out_";
+  //std::string suffix = "p.list";
+  std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/DM_SAMPLES/dm_particles_snap_0";
+  std::string suffix = ".dat";
   
-  std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/ROCKSTAR/";
+  std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
+
+  for(int i = 0; i < num.size() ; ++i ) filenames.push_back(dir + num[i] + suffix);
   
-  //filenames.push_back(dir +"out_80p.list");  // snapshot
   redshifts.push_back(0.04603);                       // maximum redshift
-  filenames.push_back(dir +"out_77p.list");
-  //redshifts.push_back(0.1058);
-  //filenames.push_back(dir +"out_74p.list");
   redshifts.push_back(0.1131);
-  filenames.push_back(dir +"out_73p.list");
   redshifts.push_back(0.1636);
-  filenames.push_back(dir +"out_64p.list");
   redshifts.push_back(0.2279);
-  filenames.push_back(dir +"out_54p.list");
-  //redshifts.push_back(0.2464);
-  //filenames.push_back(dir +"out_52p.list");
   redshifts.push_back(0.2849);
-  filenames.push_back(dir +"out_49p.list");
   redshifts.push_back(0.3256);
-  //filenames.push_back(dir +"out_46p.list");
-  //redshifts.push_back(0.3581);
-  filenames.push_back(dir +"out_44p.list");
   redshifts.push_back(0.4156);
-  filenames.push_back(dir +"out_40p.list");
   redshifts.push_back(0.4916);
-  filenames.push_back(dir +"out_34p.list");
-  //redshifts.push_back(0.5053);
-  //filenames.push_back(dir +"out_33p.list");
-  //redshifts.push_back(0.547);
-  //filenames.push_back(dir +"out_30p.list");
   redshifts.push_back(0.5618);
-  filenames.push_back(dir +"out_29p.list");
   redshifts.push_back(0.6383);
-  filenames.push_back(dir +"out_24p.list");
-  //redshifts.push_back(0.6714);
-  //filenames.push_back(dir +"out_22p.list");
   redshifts.push_back(0.7053);
-  filenames.push_back(dir +"out_20p.list");
-  //redshifts.push_back(0.7232);
-  //filenames.push_back(dir +"out_19p.list");
   redshifts.push_back(0.7976);
-  filenames.push_back(dir +"out_15p.list");
   redshifts.push_back(0.8868);
-  filenames.push_back(dir +"out_12p.list");
   redshifts.push_back(1.0);
-  filenames.push_back(dir +"out_11p.list");
   redshifts.push_back(1.445);
-  filenames.push_back(dir +"out_10p.list");
   redshifts.push_back(2.145);
-  filenames.push_back(dir +"out_9p.list");
   redshifts.push_back(2.484);
-  filenames.push_back(dir +"out_8p.list");
   redshifts.push_back(2.891);
-  filenames.push_back(dir +"out_7p.list");
   redshifts.push_back(3.0);
   
   
@@ -99,8 +75,6 @@ int main(int arg,char **argv){
   time_t to,t1;
   Utilities::RandomNumbers_NR ran(12709432);
   
-  // random observer in the box
-  double boxwidth = 3.688948e3;
   
   // random direction
 
@@ -146,25 +120,35 @@ int main(int arg,char **argv){
   std::cout << " r = " << directions[3].length() << std::endl;
   // **********************************************/
   
-  MultiLightCone mcone(degreesTOradians,observers,directions);
-  std::vector<std::vector<LightCone::DataRockStar> > conehalos(Ncones);
-  for(auto &c : conehalos) c.reserve(100000);
+  MultiLightCone hcone(degreesTOradians,observers,directions);
+  //std::vector<std::vector<LightCone::DataRockStar> > conehalos(Ncones);
+  std::vector<std::vector<Point_3d> > cone_particles(Ncones);
+  for(auto &c : cone_particles) c.reserve(100000);
   
   time(&to);
   for(int i=0 ; i < filenames.size() ; ++i){
     
     std::cout << "Reading from catalog: " << filenames[i] << " z = " << redshifts[i] << " to "
     << redshifts[i+1] << std::endl;
-    mcone.ReadBoxRockStar(filenames[i]
-                         ,cosmo.coorDist(redshifts[i])
-                         ,cosmo.coorDist(redshifts[i+1])
-                         ,conehalos);
+    //hcone.ReadBoxRockStar(filenames[i]
+    //                     ,cosmo.coorDist(redshifts[i])
+    //                     ,cosmo.coorDist(redshifts[i+1])
+    //                     ,conehalos);
     
+    hcone.ReadBoxXYZ(filenames[i]
+                     ,cosmo.coorDist(redshifts[i])
+                     ,cosmo.coorDist(redshifts[i+1])
+                     ,cone_particles
+                     ,hubble,boxwidth);
   }
   
+  //for(int i=0;i<Ncones;++i){
+  //  std::cout << "Number of halos in the cones: " << conehalos[i].size() << std::endl;
+  //  LightCone::WriteLightCone("cone_output_p" + std::to_string(i) + ".csv", conehalos[i]);
+  //}
   for(int i=0;i<Ncones;++i){
-    std::cout << "Number of halos in the cones: " << conehalos[i].size() << std::endl;
-    LightCone::WriteLightCone("cone_output_p" + std::to_string(i) + ".csv", conehalos[i]);
+    std::cout << "Number of halos in the cones: " << cone_particles[i].size() << std::endl;
+    LightCone::WriteLightCone("cone_output_p" + std::to_string(i) + ".csv", cone_particles[i]);
   }
   time(&t1);
   

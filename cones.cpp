@@ -29,6 +29,15 @@ static std::mutex barrier;
 
 int main(int arg,char **argv){
   
+  { // testing LightCone::ReadLightConeParticles
+    COSMOLOGY cosmo(Planck1yr);
+
+    std::vector<LensHalo *> halovec;
+    
+    LightCone::ReadLightConeParticles("Cone/cone_particles0.csv", cosmo, halovec,10,1.0e10,0.0);
+    
+  }
+  
   COSMOLOGY cosmo(Planck1yr);
   Point_3d xo,v;
   

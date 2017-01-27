@@ -32,10 +32,19 @@ int main(int arg,char **argv){
   { // testing LightCone::ReadLightConeParticles
     COSMOLOGY cosmo(Planck1yr);
 
-    std::vector<LensHalo *> halovec;
+    std::vector<LensHaloParticles *> halovec;
     
-    LightCone::ReadLightConeParticles("Cone/cone_particles0.csv", cosmo, halovec,10,1.0e10,0.0);
+    LightCone::ReadLightConeParticles("Cones/cone_particles0.csv", cosmo, halovec,10,1.0e10,0.0,false,true);
     
+    long seed =-1927;
+    Lens lens(&seed,3,cosmo);
+    
+    for(auto ptr_halo : halovec){
+      lens.insertMainHalo(ptr_halo,true);
+    }
+    
+    std::cout << "Number of planes : " << lens.getNplanes() << std::endl;
+    exit(0);
   }
   
   COSMOLOGY cosmo(Planck1yr);

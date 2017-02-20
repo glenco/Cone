@@ -96,7 +96,7 @@ int main(int arg,char **argv){
     snap_redshifts.push_back(2.891);
     snap_redshifts.push_back(3.0);
   }*/
-  {
+  /*{
     std::string dir = "Data/dm_particles_snap_0";
     std::string suffix = ".dat";
     
@@ -105,11 +105,11 @@ int main(int arg,char **argv){
     for(int i = 0; i < num.size() ; ++i ) snap_filenames.push_back(dir + num[i] + suffix);
     
     snap_redshifts.push_back(0.04603);
-  }
-  /*{
+  }*/
+  {
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
-    }*/
+    }
   
   time_t to,t1;
   time(&to);
@@ -133,7 +133,17 @@ int main(int arg,char **argv){
     v /= v.length();
   }
   
-  LightCones::FastLightCones(cosmo,zsources,maps,range
+  /*
+   Template options are:
+   LightCones::ASCII_XV
+   LightCones::ASCII_XM
+   
+   and more to come.
+   
+   */
+  
+  LightCones::FastLightCones<LightCones::ASCII_XV>(
+                                  cosmo,zsources,maps,range
                                   ,angular_resolution
                                   ,observers
                                   ,directions
@@ -141,23 +151,8 @@ int main(int arg,char **argv){
                                   ,snap_redshifts
                                   ,BoxLength
                                   ,particle_mass
-                                  ,true);
-/*  void FastLightCones(
-                      const COSMOLOGY &cosmo
-                      ,const std::vector<double> &zsources
-                      ,std::vector<std::vector<PixelMap> > &maps
-                      ,double range
-                      ,double angular_resolution
-                      ,std::vector<Point_3d> &observers
-                      ,std::vector<Point_3d> &directions
-                      ,const std::vector<std::string> &snap_filenames
-                      ,const std::vector<float> &snap_redshifts
-                      ,double BoxLength
-                      ,double particle_mass
-                      ,bool verbose
-                      ,bool addtocone
-                      ){
-*/
+                              ,true);
+
   // output the maps
   for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){
     for(int i=0 ; i < zsources.size() ; ++i){

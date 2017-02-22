@@ -106,10 +106,14 @@ int main(int arg,char **argv){
     
     snap_redshifts.push_back(0.04603);
   }*/
-  {
+  /*{
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
-    }
+  }*/
+  {
+    snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
+    snap_redshifts.push_back(0.04603);
+  }
   
   time_t to,t1;
   time(&to);
@@ -135,14 +139,14 @@ int main(int arg,char **argv){
   
   /*
    Template options are:
-   LightCones::ASCII_XV
-   LightCones::ASCII_XM
+   LightCones::ASCII_XV   -- for 6 column ASCII file with position and velocity
+   LightCones::ASCII_XM   -- for 5 column ASCII file with position and mass
    
    and more to come.
    
    */
   
-  LightCones::FastLightCones<LightCones::ASCII_XV>(
+  LightCones::FastLightCones<LightCones::ASCII_XMR>(
                                   cosmo,zsources,maps,range
                                   ,angular_resolution
                                   ,observers

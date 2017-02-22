@@ -100,11 +100,14 @@ int main(int arg,char **argv){
     std::string dir = "Data/dm_particles_snap_0";
     std::string suffix = ".dat";
     
-    std::vector<std::string> num = {"77"};
+    std::vector<std::string> num = {"77","73"};
+    //std::vector<std::string> num = {"77"};
     
     for(int i = 0; i < num.size() ; ++i ) snap_filenames.push_back(dir + num[i] + suffix);
     
     snap_redshifts.push_back(0.04603);
+    snap_redshifts.push_back(0.1131);
+
   }
   /*{
     snap_filenames.push_back("Data/head.dat");

@@ -60,8 +60,10 @@ int main(int arg,char **argv){
 
 
   /// stuff about the input snapshots
-  const double BoxLength = 2.5e3/cosmo.gethubble();
-  const float particle_mass = 2.359e10/cosmo.gethubble()/0.005;   // 0.5% of particles are  used
+//  const double BoxLength = 2.5e3/cosmo.gethubble();
+  //const float particle_mass = 2.359e10/cosmo.gethubble()/0.005;   // 0.5% of particles are  used
+  const double BoxLength = 2500;
+  const float particle_mass = 1.0;   // given in file
   std::vector<std::string> snap_filenames;
   std::vector<float> snap_redshifts;
   
@@ -114,8 +116,12 @@ int main(int arg,char **argv){
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
   }*/
-  {
+  /*{
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
+    snap_redshifts.push_back(0.04603);
+  }*/
+  {
+    snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.dat");
     snap_redshifts.push_back(0.04603);
   }
   
@@ -129,38 +135,43 @@ int main(int arg,char **argv){
   // random direction and observers
   std::vector<Point_3d> observers(Ncones);
   std::vector<Point_3d> directions(Ncones);
-  for(auto &x : observers){
-    x[0] = ran()*BoxLength;
-    x[1] = ran()*BoxLength;
-    x[2] = ran()*BoxLength;
-  }
-  for(auto &v : directions){
-    v[0] = ran.gauss();
-    v[1] = ran.gauss();
-    v[2] = ran.gauss();
-    v /= v.length();
-  }
   
+  // generate random observers within the box
+  LightCones::random_observers(observers,directions,Ncones,BoxLength
+                               ,range/sqrt(2),ran);
+    
   /*
    Template options are:
    LightCones::ASCII_XV   -- for 6 column ASCII file with position and velocity
    LightCones::ASCII_XM   -- for 5 column ASCII file with position and mass
-   
+   LightCones::ASCII_XMR   -- for 6 column ASCII file with position, mass and size
+
    and more to come.
    
    */
   
-  LightCones::FastLightCones<LightCones::ASCII_XMR>(
-                                  cosmo,zsources,maps,range
-                                  ,angular_resolution
-                                  ,observers
-                                  ,directions
-                                  ,snap_filenames
-                                  ,snap_redshifts
-                                  ,BoxLength
-                                  ,particle_mass
-                              ,true);
-
+  /*LightCones::FastLightCones<LightCones::ASCII_XMR>(
+                                                    cosmo,zsources,maps,range
+                                                    ,angular_resolution
+                                                    ,observers
+                                                    ,directions
+                                                    ,snap_filenames
+                                                    ,snap_redshifts
+                                                    ,BoxLength
+                                                    ,particle_mass
+                                                    ,true);/**/
+  
+  LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
+                                                    cosmo,zsources,maps,range
+                                                    ,angular_resolution
+                                                    ,observers
+                                                    ,directions
+                                                    ,snap_filenames
+                                                    ,snap_redshifts
+                                                    ,BoxLength
+                                                    ,particle_mass
+                                                    ,true);
+  
   // output the maps
   for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){
     for(int i=0 ; i < zsources.size() ; ++i){

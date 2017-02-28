@@ -52,7 +52,7 @@ int main(int arg,char **argv){
   const COSMOLOGY cosmo(BigMultiDark);
 
   //// stuff about observers and fields
-  const int Ncones = 10;
+  const int Ncones = 50;
   const double range = 6*degreesTOradians;
   const double angular_resolution = range/512;
   std::vector<double> zsources = {2.297,1.075,0.4892};
@@ -98,7 +98,7 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(2.891);
    snap_redshifts.push_back(3.0);
    }*/
-  /*{
+  {
    std::string dir = "LSS_catalog/dm_particles_snap_0";
    
    //std::string suffix = "KFth0.20.dat";
@@ -127,7 +127,7 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(2.484);
    snap_redshifts.push_back(2.891);
    snap_redshifts.push_back(3.0);
-   }*/
+   }
   /*{
     std::string dir = "Data/dm_particles_snap_0";
     std::string suffix = ".dat";
@@ -146,12 +146,15 @@ int main(int arg,char **argv){
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
   }*/
-  {
+  /*{
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_redshifts.push_back(0.04603);
   }/**/
   /*{
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.dat");
+  }*/
+  /*{
+    snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.head.dat");
     snap_redshifts.push_back(0.04603);
     }/**/
   
@@ -173,8 +176,9 @@ int main(int arg,char **argv){
   /*
    Template options are:
    LightCones::ASCII_XV   -- for 6 column ASCII file with position and velocity
-   LightCones::ASCII_XM   -- for 5 column ASCII file with position and mass
-   LightCones::ASCII_XMR   -- for 6 column ASCII file with position, mass and size
+   LightCones::ASCII_XM   -- for 4 column ASCII file with position and mass
+   LightCones::ASCII_XMR   -- for 5 column ASCII file with position, mass and size
+   LightCones::ASCII_XMRRT   -- for 7 column ASCII file with position, mass,Rmax,Rscale and an integer denoting type
 
    and more to come.
    

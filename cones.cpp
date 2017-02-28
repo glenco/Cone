@@ -52,7 +52,7 @@ int main(int arg,char **argv){
   const COSMOLOGY cosmo(BigMultiDark);
 
   //// stuff about observers and fields
-  const int Ncones = 10;
+  const int Ncones = 50;
   const double range = 6*degreesTOradians;
   const double angular_resolution = range/512;
   std::vector<double> zsources = {2.297,1.075,0.4892};
@@ -111,7 +111,7 @@ int main(int arg,char **argv){
     snap_redshifts.push_back(0.04603);
   }*/
   {
-    snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
+    snap_filenames.push_back("/home/marcos/LensingCatalogs/dm_particles_snap_007KFth0.20_lss.dat");
     snap_redshifts.push_back(0.04603);
   }
   

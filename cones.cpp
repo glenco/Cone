@@ -52,7 +52,7 @@ int main(int arg,char **argv){
   const COSMOLOGY cosmo(BigMultiDark);
 
   //// stuff about observers and fields
-  const int Ncones = 50;
+  const int Ncones = 10;
   const double range = 6*degreesTOradians;
   const double angular_resolution = range/512;
   std::vector<double> zsources = {2.297,1.075,0.4892};
@@ -71,33 +71,63 @@ int main(int arg,char **argv){
   // random observer in the box
 
   /*{
-    std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/DM_SAMPLES/dm_particles_snap_0";
-    std::string suffix = ".dat";
-    
-    std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
-    
-    for(int i = 0; i < num.size() ; ++i ) snap_filenames.push_back(dir + num[i] + suffix);
-    
-    snap_redshifts.push_back(0.04603);
-    snap_redshifts.push_back(0.1131);
-    snap_redshifts.push_back(0.1636);
-    snap_redshifts.push_back(0.2279);
-    snap_redshifts.push_back(0.2849);
-    snap_redshifts.push_back(0.3256);
-    snap_redshifts.push_back(0.4156);
-    snap_redshifts.push_back(0.4916);
-    snap_redshifts.push_back(0.5618);
-    snap_redshifts.push_back(0.6383);
-    snap_redshifts.push_back(0.7053);
-    snap_redshifts.push_back(0.7976);
-    snap_redshifts.push_back(0.8868);
-    snap_redshifts.push_back(1.0);
-    snap_redshifts.push_back(1.445);
-    snap_redshifts.push_back(2.145);
-    snap_redshifts.push_back(2.484);
-    snap_redshifts.push_back(2.891);
-    snap_redshifts.push_back(3.0);
-  }*/
+   std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/DM_SAMPLES/dm_particles_snap_0";
+   std::string suffix = ".dat";
+   
+   std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
+   
+   for(int i = 0; i < num.size() ; ++i ) snap_filenames.push_back(dir + num[i] + suffix);
+   
+   snap_redshifts.push_back(0.04603);
+   snap_redshifts.push_back(0.1131);
+   snap_redshifts.push_back(0.1636);
+   snap_redshifts.push_back(0.2279);
+   snap_redshifts.push_back(0.2849);
+   snap_redshifts.push_back(0.3256);
+   snap_redshifts.push_back(0.4156);
+   snap_redshifts.push_back(0.4916);
+   snap_redshifts.push_back(0.5618);
+   snap_redshifts.push_back(0.6383);
+   snap_redshifts.push_back(0.7053);
+   snap_redshifts.push_back(0.7976);
+   snap_redshifts.push_back(0.8868);
+   snap_redshifts.push_back(1.0);
+   snap_redshifts.push_back(1.445);
+   snap_redshifts.push_back(2.145);
+   snap_redshifts.push_back(2.484);
+   snap_redshifts.push_back(2.891);
+   snap_redshifts.push_back(3.0);
+   }*/
+  /*{
+   std::string dir = "LSS_catalog/dm_particles_snap_0";
+   
+   //std::string suffix = "KFth0.20.dat";
+   std::string suffix = "KFth0.20_lss_noS.dat";
+   
+   std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
+   
+   for(int i = 0; i < num.size() ; ++i ) snap_filenames.push_back(dir + num[i] + suffix);
+   
+   snap_redshifts.push_back(0.04603);
+   snap_redshifts.push_back(0.1131);
+   snap_redshifts.push_back(0.1636);
+   snap_redshifts.push_back(0.2279);
+   snap_redshifts.push_back(0.2849);
+   snap_redshifts.push_back(0.3256);
+   snap_redshifts.push_back(0.4156);
+   snap_redshifts.push_back(0.4916);
+   snap_redshifts.push_back(0.5618);
+   snap_redshifts.push_back(0.6383);
+   snap_redshifts.push_back(0.7053);
+   snap_redshifts.push_back(0.7976);
+   snap_redshifts.push_back(0.8868);
+   snap_redshifts.push_back(1.0);
+   snap_redshifts.push_back(1.445);
+   snap_redshifts.push_back(2.145);
+   snap_redshifts.push_back(2.484);
+   snap_redshifts.push_back(2.891);
+   snap_redshifts.push_back(3.0);
+   }*/
   /*{
     std::string dir = "Data/dm_particles_snap_0";
     std::string suffix = ".dat";
@@ -116,14 +146,14 @@ int main(int arg,char **argv){
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
   }*/
-  /*{
+  {
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_redshifts.push_back(0.04603);
-  }*/
-  {
+  }/**/
+  /*{
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.dat");
     snap_redshifts.push_back(0.04603);
-  }
+    }/**/
   
   time_t to,t1;
   time(&to);
@@ -150,7 +180,7 @@ int main(int arg,char **argv){
    
    */
   
-  /*LightCones::FastLightCones<LightCones::ASCII_XMR>(
+  LightCones::FastLightCones<LightCones::ASCII_XMR>(
                                                     cosmo,zsources,maps,range
                                                     ,angular_resolution
                                                     ,observers
@@ -161,7 +191,7 @@ int main(int arg,char **argv){
                                                     ,particle_mass
                                                     ,true);/**/
   
-  LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
+  /*LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
                                                     cosmo,zsources,maps,range
                                                     ,angular_resolution
                                                     ,observers
@@ -170,7 +200,7 @@ int main(int arg,char **argv){
                                                     ,snap_redshifts
                                                     ,BoxLength
                                                     ,particle_mass
-                                                    ,true);
+                                                    ,true);/**/
   
   // output the maps
   for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){

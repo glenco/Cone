@@ -1,5 +1,5 @@
 library(ggplot2)
-#library(functions)
+library(functions)
 
 dir = '../Output_lss'
 dir = '../Output_halos'
@@ -10,7 +10,7 @@ df <- read.csv(paste0(dir,'/kappaAve_z2.297000PS.csv'))
 
 n <- nrow(df)
 #df$PS <- df$PS - df$PS[n]
-df$llP <- df$l*df$l*df$PS*0.6**4
+df$llP <- df$l*df$l*df$PS
 df <- subset(df,l>100)
 
 df$zs <- '2.297'
@@ -21,7 +21,7 @@ dft <- read.csv(paste0(dir,'/kappaAve_z1.075000PS.csv'))
 
 n <- nrow(dft)
 #df$PS <- df$PS - df$PS[n]
-dft$llP <- dft$l*dft$l*dft$PS*0.6**4
+dft$llP <- dft$l*dft$l*dft$PS
 dft <- subset(dft,l>100)
 
 dft$zs <- '1.075'
@@ -31,7 +31,7 @@ dft <- read.csv(paste0(dir,'/kappaAve_z0.489200PS.csv'))
 
 n <- nrow(dft)
 #df$PS <- df$PS - df$PS[n]
-dft$llP <- dft$l*dft$l*dft$PS*0.6**4
+dft$llP <- dft$l*dft$l*dft$PS
 dft <- subset(dft,l>100)
 
 dft$zs <- '0.489'

@@ -18,6 +18,8 @@
 #include <omp.h>
 #include <thread>
 #include <mutex>
+#include <time.h>
+
 //#include <geometry.h>
 #include "elliptic.h"
 #include "gridmap.h"
@@ -28,31 +30,16 @@ using namespace std;
 static std::mutex barrier;
 
 int main(int arg,char **argv){
-  /*{  /// test lines
-    Point_3d v;
-    v[0] = 1.0;
-    Point_3d p;
 
-    Utilities::Geometry::Cone cone(v,p,45*degreesTOradians);
-    
-    Point_3d  p1(-3,-1,-1),p2(-2,1,1),p3(-1,-100,100);
-    
-    cout << cone.intersect_line_segment(p1,p2) << endl;
- 
-    cout << cone.intersect_face(p1,p2,p3) << endl;
- 
-    cout << cone.intersect_box(p1,p2) << endl;
-    
-    exit(0);
-    
-  }*/
+  Utilities::print_date();
+  
   // output directory
   const std::string outdir = "Output/";
   
   const COSMOLOGY cosmo(BigMultiDark);
 
   //// stuff about observers and fields
-  const int Ncones = 50;
+  const int Ncones = 5;
   const double range = 6*degreesTOradians;
   const double angular_resolution = range/512;
   std::vector<double> zsources = {2.297,1.075,0.4892};
@@ -67,10 +54,7 @@ int main(int arg,char **argv){
   std::vector<std::string> snap_filenames;
   std::vector<float> snap_redshifts;
   
-  
-  // random observer in the box
-
-  /*{
+  /*{  // from Gusavo's down sampled particle files
    std::string dir = "/data1/users/gustavo/BigMD/2.5_3840_Planck1/DM_SAMPLES/dm_particles_snap_0";
    std::string suffix = ".dat";
    
@@ -98,11 +82,16 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(2.891);
    snap_redshifts.push_back(3.0);
    }*/
-  {
+  
+  /*{  // From halo and LSS partical catalogs
+   
    std::string dir = "LSS_catalog/dm_particles_snap_0";
    
+   // Use LightCones::FastLightCones<LightCones::ASCII_XMRRT> with halo catalogs
    //std::string suffix = "KFth0.20.dat";
-   std::string suffix = "KFth0.20_lss_noS.dat";
+
+   // Use LightCones::FastLightCones<LightCones::ASCII_XMR> with LSS snapshots
+   std::string suffix = "KFth0.20_lss.dat";
    
    std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
    
@@ -128,6 +117,8 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(2.891);
    snap_redshifts.push_back(3.0);
    }
+   
+   //********************* below are certain test cases without all the input files ******************
   /*{
     std::string dir = "Data/dm_particles_snap_0";
     std::string suffix = ".dat";
@@ -150,13 +141,15 @@ int main(int arg,char **argv){
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_redshifts.push_back(0.04603);
   }/**/
-  /*{
+  {
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.dat");
-  }*/
+    snap_redshifts.push_back(0.04603);
+  }
   /*{
     snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.head.dat");
     snap_redshifts.push_back(0.04603);
     }/**/
+  //**********************************************************************************
   
   time_t to,t1;
   time(&to);
@@ -179,12 +172,14 @@ int main(int arg,char **argv){
    LightCones::ASCII_XM   -- for 4 column ASCII file with position and mass
    LightCones::ASCII_XMR   -- for 5 column ASCII file with position, mass and size
    LightCones::ASCII_XMRRT   -- for 7 column ASCII file with position, mass,Rmax,Rscale and an integer denoting type
+   lightCone::ASCII_XMRRT12 -- same as LightCones::ASCII_XMRRT but only takes entries with the 7th column equal to 1 or 2
 
    and more to come.
    
    */
   
-  LightCones::FastLightCones<LightCones::ASCII_XMR>(
+  // This is for LSS particles
+  /*LightCones::FastLightCones<LightCones::ASCII_XMR>(
                                                     cosmo,zsources,maps,range
                                                     ,angular_resolution
                                                     ,observers
@@ -195,7 +190,8 @@ int main(int arg,char **argv){
                                                     ,particle_mass
                                                     ,true);/**/
   
-  /*LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
+  // This is for halos.  You can also use ightCones::ASCII_XMRRT12
+  LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
                                                     cosmo,zsources,maps,range
                                                     ,angular_resolution
                                                     ,observers

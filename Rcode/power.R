@@ -2,8 +2,8 @@ library(ggplot2)
 library(functions)
 
 dir = '../Output_lss'
-dir = '../Output_halos'
-dir = '../Output_lss2'
+#dir = '../Output_halos'
+#dir = '../Output_lss2'
 
 
 df <- read.csv(paste0(dir,'/kappaAve_z2.297000PS.csv'))

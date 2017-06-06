@@ -43,7 +43,8 @@ int main(int arg,char **argv){
   const double range = 6*degreesTOradians;
   const double angular_resolution = range/512;
   std::vector<double> zsources = {2.297,1.075,0.4892};
-  std::vector<std::vector<PixelMap> > maps;
+  std::vector<std::vector<PixelMap> > mapsLSS;
+  std::vector<std::vector<PixelMap> > mapsHALO;
 
 
   /// stuff about the input snapshots
@@ -51,7 +52,8 @@ int main(int arg,char **argv){
   //const float particle_mass = 2.359e10/cosmo.gethubble()/0.005;   // 0.5% of particles are  used
   const double BoxLength = 2500;
   const float particle_mass = 1.0;   // given in file
-  std::vector<std::string> snap_filenames;
+  std::vector<std::string> snap_filenamesHALO;
+  std::vector<std::string> snap_filenamesLSS;
   std::vector<float> snap_redshifts;
   
   /*{  // from Gusavo's down sampled particle files
@@ -137,12 +139,9 @@ int main(int arg,char **argv){
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
   }*/
-  /*{
-    snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
-    snap_redshifts.push_back(0.04603);
-  }/**/
   {
-    snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.dat");
+    snap_filenamesHALO.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
+    snap_filenamesLSS.push_back("Data/dm_particles_snap_007KFth0.20.dat");
     snap_redshifts.push_back(0.04603);
   }
   /*{
@@ -179,12 +178,12 @@ int main(int arg,char **argv){
    */
   
   // This is for LSS particles
-  /*LightCones::FastLightCones<LightCones::ASCII_XMR>(
-                                                    cosmo,zsources,maps,range
+  LightCones::FastLightCones<LightCones::ASCII_XMR>(
+                                                    cosmo,zsources,mapsLSS,range
                                                     ,angular_resolution
                                                     ,observers
                                                     ,directions
-                                                    ,snap_filenames
+                                                    ,snap_filenamesLSS
                                                     ,snap_redshifts
                                                     ,BoxLength
                                                     ,particle_mass
@@ -192,32 +191,60 @@ int main(int arg,char **argv){
   
   // This is for halos.  You can also use ightCones::ASCII_XMRRT12
   LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
-                                                    cosmo,zsources,maps,range
+                                                    cosmo,zsources,mapsHALO,range
                                                     ,angular_resolution
                                                     ,observers
                                                     ,directions
-                                                    ,snap_filenames
+                                                    ,snap_filenamesHALO
                                                     ,snap_redshifts
                                                     ,BoxLength
                                                     ,particle_mass
                                                     ,true);/**/
   
-  // output the maps
-  for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){
+  
+  
+  // add maps for total, very inofficient
+  std::vector<std::vector<PixelMap> > mapsTOTAL(Ncones);
+
+  for(int icone = 0 ; icone < Ncones ; ++icone){
     for(int i=0 ; i < zsources.size() ; ++i){
-      maps[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
-                               + std::to_string(zsources[i]) + ".fits" );
+      mapsTOTAL[icone].push_back(mapsLSS[icone][i]);
+      mapsTOTAL[icone].back() += mapsHALO[icone][i];
     }
   }
+
+  
+  
+  // output the maps of first 5 cones
+  for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){
+    for(int i=0 ; i < zsources.size() ; ++i){
+      mapsLSS[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
+                                  + std::to_string(zsources[i]) + "LSS.fits" );
+      mapsHALO[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
+                                   + std::to_string(zsources[i]) + "HALO.fits" );
+      mapsTOTAL[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
+                                   + std::to_string(zsources[i]) + "TOTAL.fits" );
+    }
+  }
+  
   // caclulate and output power spectra
   int N = 50;
   std::vector<PosType> pspectrum(N),multipole(N);
   for(int i=0 ; i < zsources.size() ; ++i){
-    std::vector<PosType> totalpower(N,0);
+    std::vector<PosType> powerLSS(N,0),powerHALO(N,0),powerTOTAL(N,0);
+    
     for(int icone = 0 ; icone < Ncones ; ++icone){
-      maps[icone][i].PowerSpectrum(pspectrum,multipole);
+      mapsLSS[icone][i].PowerSpectrum(pspectrum,multipole);
+      for(int ii=0 ; ii<N ; ++ii ) powerLSS[ii] += pspectrum[ii]/Ncones;
+
+      mapsHALO[icone][i].PowerSpectrum(pspectrum,multipole);
+      for(int ii=0 ; ii<N ; ++ii ) powerHALO[ii] += pspectrum[ii]/Ncones;
+
+      mapsTOTAL[icone][i].PowerSpectrum(pspectrum,multipole);
+      for(int ii=0 ; ii<N ; ++ii ) powerTOTAL[ii] += pspectrum[ii]/Ncones;
+
       
-      {
+      /*{
         std::ofstream ps_file(outdir + "kappa_c" + std::to_string(icone) + "z"
                               + std::to_string(zsources[i]) + "PS" + ".csv");
         ps_file << "l,PS" << endl;
@@ -225,20 +252,39 @@ int main(int arg,char **argv){
           ps_file << multipole[ii] << "," << pspectrum[ii] << endl;
         }
         ps_file.close();
-      }
+      }*/
       
-      for(int ii=0 ; ii<N ; ++ii ) totalpower[ii] += pspectrum[ii]/Ncones;
+      
+      
     }
     
     {
       std::ofstream ps_file(outdir + "kappaAve_z"
-                            + std::to_string(zsources[i]) + "PS" + ".csv");
+                            + std::to_string(zsources[i]) + "PowLSS.csv");
       ps_file << "l,PS" << endl;
       for(int ii=0;ii<N;++ii){
-        ps_file << multipole[ii] << "," << totalpower[ii] << endl;
+        ps_file << multipole[ii] << "," << powerLSS[ii] << endl;
+      }
+      ps_file.close();
+
+      ps_file.open(outdir + "kappaAve_z"
+                   + std::to_string(zsources[i]) + "PowHALO.csv");
+      ps_file << "l,PS" << endl;
+      for(int ii=0;ii<N;++ii){
+        ps_file << multipole[ii] << "," << powerHALO[ii] << endl;
+      }
+      ps_file.close();
+      
+      ps_file.open(outdir + "kappaAve_z"
+                   + std::to_string(zsources[i]) + "PowTOTAL.csv");
+      ps_file << "l,PS" << endl;
+      for(int ii=0;ii<N;++ii){
+        ps_file << multipole[ii] << "," << powerTOTAL[ii] << endl;
       }
       ps_file.close();
     }
+    
+    
   }
   
   

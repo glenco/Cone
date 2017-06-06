@@ -11,7 +11,7 @@ df <- read.csv(paste0(dir,'/kappaAve_z2.297000PS.csv'))
 n <- nrow(df)
 #df$PS <- df$PS - df$PS[n]
 df$llP <- df$l*df$l*df$PS
-df <- subset(df,l>100)
+df <- subset(df,l>90)
 
 df$zs <- '2.297'
 
@@ -22,7 +22,7 @@ dft <- read.csv(paste0(dir,'/kappaAve_z1.075000PS.csv'))
 n <- nrow(dft)
 #df$PS <- df$PS - df$PS[n]
 dft$llP <- dft$l*dft$l*dft$PS
-dft <- subset(dft,l>100)
+dft <- subset(dft,l>90)
 
 dft$zs <- '1.075'
 
@@ -32,7 +32,7 @@ dft <- read.csv(paste0(dir,'/kappaAve_z0.489200PS.csv'))
 n <- nrow(dft)
 #df$PS <- df$PS - df$PS[n]
 dft$llP <- dft$l*dft$l*dft$PS
-dft <- subset(dft,l>100)
+dft <- subset(dft,l>90)
 
 dft$zs <- '0.489'
 
@@ -52,13 +52,23 @@ plt <- ggplot(df,aes(x=l,y=llP,colour=zs)) +
 MDpower <- readVipersBMD('10')
 MDpower$zs <- '1.075'
 
-MDpowert <- readVipersBMD('1')
-MDpowert$zs <- '2.297'
-MDpower <- rbind(MDpower,MDpowert)
+#MDpowert <- readVipersBMD('1')
+#MDpowert$zs <- '2.297'
+#MDpower <- rbind(MDpower,MDpowert)
 
-MDpowert <- readVipersBMD('17')
-MDpowert$zs <- '0.489'
-MDpower <- rbind(MDpower,MDpowert)
+#MDpowert <- readVipersBMD('17')
+#MDpowert$zs <- '0.489'
+#MDpower <- rbind(MDpower,MDpowert)
+
+MDpower <- MDpower$llP/pi**2/8
 
 plt + geom_line(data=MDpower)
+
+#test <- read.csv("particle_mapPowerSpectrum.dat",sep="")
+#test$llP <- test$l*test$l*test$P/pi**2/8
+#test$zs <- "1.0"
+#test <- subset(test,l>100)
+#plt + geom_line(data=test)
+
+
 

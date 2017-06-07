@@ -1,8 +1,8 @@
 library(ggplot2)
 library(functions)
 
-#dir = '../Output_lss'
-dir = '../Output_halos'
+dir = '../Output_lss'
+#dir = '../Output_halos'
 #dir = '../Output_lss2'
 
 
@@ -51,13 +51,13 @@ plt <- ggplot(df,aes(x=l,y=llP,colour=zs)) +
 
 MDpower <- readVipersBMD('10')
 
-#MDpowert <- readVipersBMD('1')
-#MDpower <- rbind(MDpower,MDpowert)
+MDpowert <- readVipersBMD('1')
+MDpower <- rbind(MDpower,MDpowert)
 
-#MDpowert <- readVipersBMD('17')
-#MDpower <- rbind(MDpower,MDpowert)
+MDpowert <- readVipersBMD('17')
+MDpower <- rbind(MDpower,MDpowert)
 
-#MDpower$llP <- MDpower$llP/pi/8
+MDpower$llP <- MDpower$llP/pi/8
 
 plt + geom_line(data=MDpower)
 

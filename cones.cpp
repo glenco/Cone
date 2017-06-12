@@ -85,7 +85,7 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(3.0);
    }*/
   
-  /*{  // From halo and LSS partical catalogs
+  {  // From halo and LSS partical catalogs
    
    std::string dir = "LSS_catalog/dm_particles_snap_0";
    
@@ -93,11 +93,12 @@ int main(int arg,char **argv){
    //std::string suffix = "KFth0.20.dat";
 
    // Use LightCones::FastLightCones<LightCones::ASCII_XMR> with LSS snapshots
-   std::string suffix = "KFth0.20_lss.dat";
+   //std::string suffix = "KFth0.20_lss.dat";
    
    std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
    
-   for(int i = 0; i < num.size() ; ++i ) snap_filenames.push_back(dir + num[i] + suffix);
+    for(int i = 0; i < num.size() ; ++i ) snap_filenamesLSS.push_back(dir + num[i] + "KFth0.20_lss.dat");
+    for(int i = 0; i < num.size() ; ++i ) snap_filenamesHALO.push_back(dir + num[i] + "KFth0.20.dat");
    
    snap_redshifts.push_back(0.04603);
    snap_redshifts.push_back(0.1131);
@@ -139,7 +140,7 @@ int main(int arg,char **argv){
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
   }*/
-  {
+  /*{
     snap_filenamesHALO.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_filenamesLSS.push_back("Data/dm_particles_snap_007KFth0.20.dat");
     snap_redshifts.push_back(0.04603);

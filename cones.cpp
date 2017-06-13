@@ -39,7 +39,9 @@ int main(int arg,char **argv){
   const COSMOLOGY cosmo(BigMultiDark);
 
   //// stuff about observers and fields
-  const int Ncones = 5;
+
+  const int Ncones = 50;
+
   const double range = 6*degreesTOradians;
   const double angular_resolution = range/512;
   std::vector<double> zsources = {2.297,1.075,0.4892};
@@ -97,7 +99,7 @@ int main(int arg,char **argv){
    
    std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
    
-    for(int i = 0; i < num.size() ; ++i ) snap_filenamesLSS.push_back(dir + num[i] + "KFth0.20_lss.dat");
+    for(int i = 0; i < num.size() ; ++i ) snap_filenamesLSS.push_back(dir + num[i] + "KFth0.20_lss_noS.dat");
     for(int i = 0; i < num.size() ; ++i ) snap_filenamesHALO.push_back(dir + num[i] + "KFth0.20.dat");
    
    snap_redshifts.push_back(0.04603);
@@ -140,6 +142,10 @@ int main(int arg,char **argv){
     snap_filenames.push_back("Data/head.dat");
     snap_redshifts.push_back(0.04603);
   }*/
+  
+  /*{
+    snap_filenames.push_back("/home/marcos/LensingCatalogs/dm_particles_snap_007KFth0.20_lss.dat");
+    }*/
   /*{
     snap_filenamesHALO.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_filenamesLSS.push_back("Data/dm_particles_snap_007KFth0.20.dat");

@@ -87,10 +87,10 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(3.0);
    }*/
   
-  {  // From halo and LSS partical catalogs
+  /*{  // From halo and LSS partical catalogs
    
-   std::string dir = "LSS_catalog/dm_particles_snap_0";
-   
+   //std::string dir = "LSS_catalog/dm_particles_snap_0";
+   std::string dir = "/home/marcos/LensingCatalogs/LSSandHaloCatalogs";
    // Use LightCones::FastLightCones<LightCones::ASCII_XMRRT> with halo catalogs
    //std::string suffix = "KFth0.20.dat";
 
@@ -121,7 +121,7 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(2.484);
    snap_redshifts.push_back(2.891);
    snap_redshifts.push_back(3.0);
-   }
+   }/**/
    
    //********************* below are certain test cases without all the input files ******************
   /*{
@@ -143,9 +143,12 @@ int main(int arg,char **argv){
     snap_redshifts.push_back(0.04603);
   }*/
   
-  /*{
-    snap_filenames.push_back("/home/marcos/LensingCatalogs/dm_particles_snap_007KFth0.20_lss.dat");
-    }*/
+  {
+    std::string dir = "/home/marcos/LensingCatalogs/LSSandHaloCatalogs/";
+    snap_filenamesHALO.push_back(dir + "dm_particles_snap_007KFth0.20.dat");
+    snap_filenamesLSS.push_back(dir + "dm_particles_snap_007KFth0.20_lss.dat");
+    snap_redshifts.push_back(0.04603);
+    }
   /*{
     snap_filenamesHALO.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_filenamesLSS.push_back("Data/dm_particles_snap_007KFth0.20.dat");
@@ -193,8 +196,7 @@ int main(int arg,char **argv){
                                                     ,snap_filenamesLSS
                                                     ,snap_redshifts
                                                     ,BoxLength
-                                                    ,particle_mass
-                                                    ,true);/**/
+                                                    ,particle_mass);
   
   // This is for halos.  You can also use ightCones::ASCII_XMRRT12
   LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
@@ -205,10 +207,7 @@ int main(int arg,char **argv){
                                                     ,snap_filenamesHALO
                                                     ,snap_redshifts
                                                     ,BoxLength
-                                                    ,particle_mass
-                                                    ,true);/**/
-  
-  
+                                                      ,particle_mass);
   
   // add maps for total, very inofficient
   std::vector<std::vector<PixelMap> > mapsTOTAL(Ncones);
@@ -260,8 +259,6 @@ int main(int arg,char **argv){
         }
         ps_file.close();
       }*/
-      
-      
       
     }
     

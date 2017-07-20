@@ -6,7 +6,8 @@ dirs <- c('../Output_lss','../Output_halos')
 
 
 df <- data.frame()
-
+norms <- c(1.0,2.5e4)
+i=1
 for(dir in dirs){
   print(dir)
   
@@ -29,7 +30,8 @@ for(dir in dirs){
 
   dft <- read.csv(paste0(dir,'/kappaAve_z0.489200PS.csv'))
 
-  dft$llP <- dft$l*dft$l*dft$PS
+  dft$llP <- dft$l*dft$l*dft$PS/norms[i]
+  i = i + 1
   dft <- subset(dft,l>90)
 
   dft$zs <- paste('0.489', dir)
@@ -65,6 +67,12 @@ MDpower$zs <- paste(MDpower$zs,'BigMD')
 
 plt + geom_line(data=MDpower)
 
+#labels = c('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24')
+#MDpower <- NULL
+#for(i in labels ){
+#  print(i)
+#  MDpowert <- readVipersBMD(i)
+#  MDpower <- rbind(MDpower,MDpowert)
+#}
 
-
-
+#write.csv(MDpower,file='BigMD.csv')

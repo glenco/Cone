@@ -24,12 +24,54 @@
 #include "elliptic.h"
 #include "gridmap.h"
 #include "lightcone_construction.h"
+#include "profiles.h"
 
 using namespace std;
 
 static std::mutex barrier;
 
+/**************** test ************************
+
+struct dTNFW{
+  dTNFW(double c){
+    tnfw = new Profiles::TNFW2D(c);
+  }
+  ~dTNFW(){delete tnfw;}
+  
+  Profiles::TNFW2D* tnfw;
+  double operator()(double x){return 2*pi*x*(*tnfw)(x);}
+};
+
+struct dspline{
+  double operator()(double q){return 2*pi*q*Profiles::Bspline<2>(q);}
+};
+
+//***********************************************/
+
+
 int main(int arg,char **argv){
+  
+  /**************** test ************************
+
+  dspline integrand;
+  std::cout << Utilities::nintegrate<dspline,double>(integrand,0,5,1.0e-3)
+  << std::endl;
+  
+  double c =5.0;
+  
+  Profiles::TNFW2D test(c);
+  std::cout << test(c*0.999) << std::endl;
+  
+  for(c=1.1;c<21;c *= 1.1){
+    dTNFW dtnfw(c);
+    std::cout << c << " " << Utilities::nintegrate<dTNFW,double>(dtnfw,0.0001,c,1.0e-5)
+  << std::endl;
+  }
+  cout.precision(17);
+  cout << 10./(7*pi)/4 << endl;
+  
+  exit(0);
+  //***********************************************/
 
   Utilities::print_date();
   
@@ -160,7 +202,7 @@ int main(int arg,char **argv){
     }/**/
   //**********************************************************************************
   
-  time_t to,t1;
+  time_t to,t1,t2;
   time(&to);
 
   
@@ -187,6 +229,8 @@ int main(int arg,char **argv){
    
    */
   
+
+  time(&t1);
   // This is for LSS particles
   LightCones::FastLightCones<LightCones::ASCII_XMR>(
                                                     cosmo,zsources,mapsLSS,range
@@ -198,6 +242,12 @@ int main(int arg,char **argv){
                                                     ,BoxLength
                                                     ,particle_mass);
   
+  time(&t2);
+  std::cout << "time for LSS cones: " << difftime(t2,t1)/60 << " min"
+  << std::endl;
+
+  
+  time(&t1);
   // This is for halos.  You can also use ightCones::ASCII_XMRRT12
   LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
                                                     cosmo,zsources,mapsHALO,range
@@ -207,8 +257,12 @@ int main(int arg,char **argv){
                                                     ,snap_filenamesHALO
                                                     ,snap_redshifts
                                                     ,BoxLength
-                                                      ,particle_mass);
+                                                    ,particle_mass);
+  time(&t2);
+  std::cout << "time for Halo cones: " << difftime(t2,t1)/60 << " min"
+  << std::endl;
   
+
   // add maps for total, very inofficient
   std::vector<std::vector<PixelMap> > mapsTOTAL(Ncones);
 
@@ -235,7 +289,7 @@ int main(int arg,char **argv){
   
   // caclulate and output power spectra
   int N = 50;
-  std::vector<PosType> pspectrum(N),multipole(N);
+  std::vector<PosType> pspectrum(N,0),multipole(N,0);
   for(int i=0 ; i < zsources.size() ; ++i){
     std::vector<PosType> powerLSS(N,0),powerHALO(N,0),powerTOTAL(N,0);
     

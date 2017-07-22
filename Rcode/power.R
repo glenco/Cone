@@ -1,16 +1,20 @@
 library(ggplot2)
 library(functions)
 
-dirs <- c('../Output_lss','../Output_halos')
+#dirs <- c('../Output_lss','../Output_halos')
 #dir = '../Output_lss2'
 
+dir <- "../Output/"
+zs <- "1.075000"
+labels = c('PowTOTAL','PowHALO','PowLSS')
 
 df <- data.frame()
-norms <- c(1.0,2.5e4)
+#norms <- c(1.0,2.5e4)
+norms <- c(1.0,1.0,1.0)
 i=1
-for(dir in dirs){
-  print(dir)
-  
+print(dir)
+for(label in labels){
+  print(label)
 #  dft <- read.csv(paste0(dir,'/kappaAve_z2.297000PS.csv'))
 
 #  dft$llP <- dft$l*dft$l*dft$PS
@@ -28,13 +32,15 @@ for(dir in dirs){
 
 #  df <- rbind(df,dft)
 
-  dft <- read.csv(paste0(dir,'/kappaAve_z0.489200PS.csv'))
+  file = paste0(dir,'kappaAve_z',zs,label,'.csv')
+  print(file)
+  dft <- read.csv(file)
 
   dft$llP <- dft$l*dft$l*dft$PS/norms[i]
   i = i + 1
   dft <- subset(dft,l>90)
 
-  dft$zs <- paste('0.489', dir)
+  dft$zs <- paste(zs, label)
 
   df <- rbind(df,dft)
 }
@@ -51,17 +57,14 @@ plt <- ggplot(df,aes(x=l,y=llP,colour=zs)) +
 #  BigMultiDark spectra
 #####################################################
 
+plt
+
 MDpower <- NULL
 
-#MDpower <- readVipersBMD('10')
-
-#MDpowert <- readVipersBMD('1')
-#MDpower <- rbind(MDpower,MDpowert)
-
-MDpowert <- readVipersBMD('17')
+MDpowert <- readVipersBMD('10')
 MDpower <- rbind(MDpower,MDpowert)
 
-MDpower$llP <- MDpower$llP/pi/8
+MDpower$llP <- MDpower$llP#/pi/8
 
 MDpower$zs <- paste(MDpower$zs,'BigMD')
 

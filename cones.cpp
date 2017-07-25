@@ -30,7 +30,7 @@ using namespace std;
 
 static std::mutex barrier;
 
-/**************** test ************************
+//**************** test ************************
 
 struct dTNFW{
   dTNFW(double c){
@@ -40,6 +40,16 @@ struct dTNFW{
   
   Profiles::TNFW2D* tnfw;
   double operator()(double x){return 2*pi*x*(*tnfw)(x);}
+};
+
+struct dNFW{
+  dNFW(double c):c(c){
+  }
+  
+  Profiles::NFW2D nfw;
+  double operator()(double x){return 2*pi*x*nfw(x,c);}
+  
+  double c;
 };
 
 struct dspline{
@@ -59,12 +69,10 @@ int main(int arg,char **argv){
   
   double c =5.0;
   
-  Profiles::TNFW2D test(c);
-  std::cout << test(c*0.999) << std::endl;
   
   for(c=1.1;c<21;c *= 1.1){
-    dTNFW dtnfw(c);
-    std::cout << c << " " << Utilities::nintegrate<dTNFW,double>(dtnfw,0.0001,c,1.0e-5)
+    dNFW dnfw(c);
+    std::cout << c << " " << Utilities::nintegrate<dNFW,double>(dnfw,0.0001,c,1.0e-5)
   << std::endl;
   }
   cout.precision(17);
@@ -185,13 +193,13 @@ int main(int arg,char **argv){
     snap_redshifts.push_back(0.04603);
   }*/
   
-  {
+  /*{
     std::string dir = "/home/marcos/LensingCatalogs/LSSandHaloCatalogs/";
     snap_filenamesHALO.push_back(dir + "dm_particles_snap_007KFth0.20.dat");
     snap_filenamesLSS.push_back(dir + "dm_particles_snap_007KFth0.20_lss.dat");
     snap_redshifts.push_back(0.04603);
-    }
-  /*{
+    }*/
+  {
     snap_filenamesHALO.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_filenamesLSS.push_back("Data/dm_particles_snap_007KFth0.20.dat");
     snap_redshifts.push_back(0.04603);
@@ -232,7 +240,7 @@ int main(int arg,char **argv){
 
   time(&t1);
   // This is for LSS particles
-  LightCones::FastLightCones<LightCones::ASCII_XMR>(
+  /*LightCones::FastLightCones<LightCones::ASCII_XMR>(
                                                     cosmo,zsources,mapsLSS,range
                                                     ,angular_resolution
                                                     ,observers
@@ -241,7 +249,7 @@ int main(int arg,char **argv){
                                                     ,snap_redshifts
                                                     ,BoxLength
                                                     ,particle_mass);
-  
+*/  
   time(&t2);
   std::cout << "time for LSS cones: " << difftime(t2,t1)/60 << " min"
   << std::endl;

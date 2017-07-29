@@ -5,12 +5,13 @@ library(functions)
 #dir = '../Output_lss2'
 
 dir <- "../Output/"
-zs <- "1.075000"
+#zs <- "1.075000"
+zs <- "0.489200"
 labels = c('PowTOTAL','PowHALO','PowLSS')
 
 df <- data.frame()
 #norms <- c(1.0,2.5e4)
-norms <- c(1.0,1.0,1.0)
+norms <- c(1.0,1.0,1.0e-0)
 i=1
 print(dir)
 for(label in labels){
@@ -61,10 +62,10 @@ plt
 
 MDpower <- NULL
 
-MDpowert <- readVipersBMD('10')
+MDpowert <- readVipersBMD('18')
 MDpower <- rbind(MDpower,MDpowert)
 
-MDpower$llP <- MDpower$llP#/pi/8
+MDpower$llP <- MDpower$llP/pi/8
 
 MDpower$zs <- paste(MDpower$zs,'BigMD')
 

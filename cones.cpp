@@ -42,6 +42,15 @@ struct dTNFW{
   double operator()(double x){return 2*pi*x*(*tnfw)(x);}
 };
 
+struct dNFW{
+  dNFW(double my_c):cons(my_c){}
+  
+  double cons;
+  
+  Profiles::NFW2D nfw;
+  double operator()(double x){return 2*pi*x*nfw(x,cons);}
+};
+
 struct dspline{
   double operator()(double q){return 2*pi*q*Profiles::Bspline<2>(q);}
 };
@@ -57,35 +66,41 @@ int main(int arg,char **argv){
   std::cout << Utilities::nintegrate<dspline,double>(integrand,0,5,1.0e-3)
   << std::endl;
   
-  double c =5.0;
+  double c =10.0;
   
-  Profiles::TNFW2D test(c);
-  std::cout << test(c*0.999) << std::endl;
+  //Profiles::NFW2D nfwprofile;
+  //for(double x=0.00100591;x <c*1.01;x *= 1.01){
+  //  cout << x << " " << nfwprofile(x,c) << endl;
+  //}
   
   for(c=1.1;c<21;c *= 1.1){
-    dTNFW dtnfw(c);
-    std::cout << c << " " << Utilities::nintegrate<dTNFW,double>(dtnfw,0.0001,c,1.0e-5)
+    dNFW dnfw(c);
+    std::cout << c << " " << Utilities::nintegrate<dNFW,double>(dnfw,0.0001,c,1.0e-5)
   << std::endl;
   }
-  cout.precision(17);
-  cout << 10./(7*pi)/4 << endl;
+  //cout.precision(17);
+  //cout << 10./(7*pi)/4 << endl;
   
   exit(0);
   //***********************************************/
 
+  
   Utilities::print_date();
   
   // output directory
   const std::string outdir = "Output/";
-  
-  const COSMOLOGY cosmo(BigMultiDark);
+  // simulation directory
+  //const std::string datadir = "/home/marcos/LensingCatalogs/LSSandHaloCatalogs/";
+  const std::string datadir = "Data/";
 
+  COSMOLOGY cosmo(BigMultiDark);
+  
   //// stuff about observers and fields
 
-  const int Ncones = 50;
+  const int Ncones = 10;
 
   const double range = 6*degreesTOradians;
-  const double angular_resolution = range/512;
+  const double angular_resolution = range/512/2;
   std::vector<double> zsources = {2.297,1.075,0.4892};
   std::vector<std::vector<PixelMap> > mapsLSS;
   std::vector<std::vector<PixelMap> > mapsHALO;
@@ -186,9 +201,8 @@ int main(int arg,char **argv){
   }*/
   
   {
-    std::string dir = "/home/marcos/LensingCatalogs/LSSandHaloCatalogs/";
-    snap_filenamesHALO.push_back(dir + "dm_particles_snap_007KFth0.20.dat");
-    snap_filenamesLSS.push_back(dir + "dm_particles_snap_007KFth0.20_lss.dat");
+    snap_filenamesHALO.push_back(datadir + "dm_particles_snap_007KFth0.20.dat");
+    snap_filenamesLSS.push_back(datadir + "dm_particles_snap_007KFth0.20_lss.dat");
     snap_redshifts.push_back(0.04603);
     }
   /*{
@@ -228,8 +242,10 @@ int main(int arg,char **argv){
    and more to come.
    
    */
-  
+  int Npower = 50;
+  std::vector<PosType> pspectrum(Npower,0),multipole(Npower,0);
 
+  std::cout << "Starting LSS calculation..."  << std::endl;
   time(&t1);
   // This is for LSS particles
   LightCones::FastLightCones<LightCones::ASCII_XMR>(
@@ -240,112 +256,144 @@ int main(int arg,char **argv){
                                                     ,snap_filenamesLSS
                                                     ,snap_redshifts
                                                     ,BoxLength
-                                                    ,particle_mass);
-  
+                                                    ,particle_mass);/**/
+
   time(&t2);
   std::cout << "time for LSS cones: " << difftime(t2,t1)/60 << " min"
   << std::endl;
+  std::cout << "Writing LSS files..."  << std::endl;
 
+  // output the maps of first 5 cones
+  for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){
+    for(int i=0 ; i < zsources.size() ; ++i){
+      mapsLSS[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
+                                  + std::to_string(zsources[i]) + "LSS.fits" );
+    }
+  }
   
+  
+  // caclulate and output power spectra
+  for(int i=0 ; i < zsources.size() ; ++i){
+    std::vector<PosType> powerLSS(Npower,0);
+    
+    for(int icone = 0 ; icone < Ncones ; ++icone){
+      mapsLSS[icone][i].PowerSpectrum(pspectrum,multipole);
+      for(int ii=0 ; ii<Npower ; ++ii ) powerLSS[ii] += pspectrum[ii]/Ncones;
+    }
+    
+    std::ofstream ps_file(outdir + "kappaAve_z"
+                          + std::to_string(zsources[i]) + "PowLSS.csv");
+    ps_file << "l,PS" << endl;
+    for(int ii=0;ii<Npower;++ii){
+      ps_file << multipole[ii] << "," << powerLSS[ii] << endl;
+    }
+    ps_file.close();
+    
+  }
+
+  std::cout << "Starting halo calculation..."  << std::endl;
   time(&t1);
   // This is for halos.  You can also use ightCones::ASCII_XMRRT12
   LightCones::FastLightCones<LightCones::ASCII_XMRRT>(
-                                                    cosmo,zsources,mapsHALO,range
-                                                    ,angular_resolution
-                                                    ,observers
-                                                    ,directions
-                                                    ,snap_filenamesHALO
-                                                    ,snap_redshifts
-                                                    ,BoxLength
-                                                    ,particle_mass);
+                                                      cosmo,zsources,mapsHALO,range
+                                                      ,angular_resolution
+                                                      ,observers
+                                                      ,directions
+                                                      ,snap_filenamesHALO
+                                                      ,snap_redshifts
+                                                      ,BoxLength
+                                                      ,particle_mass);
+  
+  /*LightCones::FastLightCones<LightCones::HDF5_XMRRT12>(
+                                                      cosmo,zsources,mapsHALO,range
+                                                      ,angular_resolution
+                                                      ,observers
+                                                      ,directions
+                                                      ,snap_filenamesHALO
+                                                      ,snap_redshifts
+                                                      ,BoxLength
+                                                      ,particle_mass);
+   */
+
   time(&t2);
   std::cout << "time for Halo cones: " << difftime(t2,t1)/60 << " min"
   << std::endl;
   
+  
+  // output the maps of first 5 cones
+  for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){
+    for(int i=0 ; i < zsources.size() ; ++i){
+      mapsHALO[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
+                                   + std::to_string(zsources[i]) + "HALO.fits" );
+    }
+  }
+  
+  std::cout << "Writing HALO files..."  << std::endl;
+ // caclulate and output power spectra
+  for(int i=0 ; i < zsources.size() ; ++i){
+    std::vector<PosType> powerHALO(Npower,0);
+    
+    for(int icone = 0 ; icone < Ncones ; ++icone){
 
+      mapsHALO[icone][i].PowerSpectrum(pspectrum,multipole);
+      for(int ii=0 ; ii<Npower ; ++ii ) powerHALO[ii] += pspectrum[ii]/Ncones;
+    }
+    
+    {
+      std::ofstream ps_file(outdir + "kappaAve_z"
+                   + std::to_string(zsources[i]) + "PowHALO.csv");
+      ps_file << "l,PS" << endl;
+      for(int ii=0;ii<Npower;++ii){
+        ps_file << multipole[ii] << "," << powerHALO[ii] << endl;
+      }
+      ps_file.close();
+    }
+    
+    
+  }
+  
   // add maps for total, very inofficient
   std::vector<std::vector<PixelMap> > mapsTOTAL(Ncones);
-
+  
   for(int icone = 0 ; icone < Ncones ; ++icone){
     for(int i=0 ; i < zsources.size() ; ++i){
       mapsTOTAL[icone].push_back(mapsLSS[icone][i]);
       mapsTOTAL[icone].back() += mapsHALO[icone][i];
     }
   }
-
+  
   
   
   // output the maps of first 5 cones
   for(int icone = 0 ; icone < min(5,Ncones) ; ++icone){
     for(int i=0 ; i < zsources.size() ; ++i){
-      mapsLSS[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
-                                  + std::to_string(zsources[i]) + "LSS.fits" );
-      mapsHALO[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
-                                   + std::to_string(zsources[i]) + "HALO.fits" );
-      mapsTOTAL[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
-                                   + std::to_string(zsources[i]) + "TOTAL.fits" );
+     mapsTOTAL[icone][i].printFITS("!" + outdir + "kappa_c" + std::to_string(icone) + "z"
+                                    + std::to_string(zsources[i]) + "TOTAL.fits" );
     }
   }
   
+  std::cout << "Writing TOTAL files..."  << std::endl;
   // caclulate and output power spectra
-  int N = 50;
-  std::vector<PosType> pspectrum(N,0),multipole(N,0);
   for(int i=0 ; i < zsources.size() ; ++i){
-    std::vector<PosType> powerLSS(N,0),powerHALO(N,0),powerTOTAL(N,0);
+    std::vector<PosType> powerTOTAL(Npower,0);
     
     for(int icone = 0 ; icone < Ncones ; ++icone){
-      mapsLSS[icone][i].PowerSpectrum(pspectrum,multipole);
-      for(int ii=0 ; ii<N ; ++ii ) powerLSS[ii] += pspectrum[ii]/Ncones;
-
-      mapsHALO[icone][i].PowerSpectrum(pspectrum,multipole);
-      for(int ii=0 ; ii<N ; ++ii ) powerHALO[ii] += pspectrum[ii]/Ncones;
-
-      mapsTOTAL[icone][i].PowerSpectrum(pspectrum,multipole);
-      for(int ii=0 ; ii<N ; ++ii ) powerTOTAL[ii] += pspectrum[ii]/Ncones;
-
       
-      /*{
-        std::ofstream ps_file(outdir + "kappa_c" + std::to_string(icone) + "z"
-                              + std::to_string(zsources[i]) + "PS" + ".csv");
-        ps_file << "l,PS" << endl;
-        for(int ii=0;ii<pspectrum.size();++ii){
-          ps_file << multipole[ii] << "," << pspectrum[ii] << endl;
-        }
-        ps_file.close();
-      }*/
+       mapsTOTAL[icone][i].PowerSpectrum(pspectrum,multipole);
+      for(int ii=0 ; ii<Npower ; ++ii ) powerTOTAL[ii] += pspectrum[ii]/Ncones;
       
     }
     
     {
       std::ofstream ps_file(outdir + "kappaAve_z"
-                            + std::to_string(zsources[i]) + "PowLSS.csv");
-      ps_file << "l,PS" << endl;
-      for(int ii=0;ii<N;++ii){
-        ps_file << multipole[ii] << "," << powerLSS[ii] << endl;
-      }
-      ps_file.close();
-
-      ps_file.open(outdir + "kappaAve_z"
-                   + std::to_string(zsources[i]) + "PowHALO.csv");
-      ps_file << "l,PS" << endl;
-      for(int ii=0;ii<N;++ii){
-        ps_file << multipole[ii] << "," << powerHALO[ii] << endl;
-      }
-      ps_file.close();
-      
-      ps_file.open(outdir + "kappaAve_z"
                    + std::to_string(zsources[i]) + "PowTOTAL.csv");
       ps_file << "l,PS" << endl;
-      for(int ii=0;ii<N;++ii){
+      for(int ii=0;ii<Npower;++ii){
         ps_file << multipole[ii] << "," << powerTOTAL[ii] << endl;
       }
       ps_file.close();
     }
-    
-    
   }
-  
-  
   time(&t1);
   
   std::cout << "time for constructing cone : " << difftime(t1,to)/60 << " min"

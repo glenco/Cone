@@ -249,7 +249,7 @@ int main(int arg,char **argv){
   std::cout << "Starting LSS calculation..."  << std::endl;
   time(&t1);
   // This is for LSS particles
-  /*LightCones::FastLightCones<LightCones::ASCII_XMR>(
+  LightCones::FastLightCones<LightCones::ASCII_XMR>(
                                                     cosmo,zsources,mapsLSS,range
                                                     ,angular_resolution
                                                     ,observers
@@ -336,7 +336,7 @@ int main(int arg,char **argv){
     
     for(int icone = 0 ; icone < Ncones ; ++icone){
 
-      mapsHALO[icone][i].PowerSpectrum(pspectrum,multipole);
+      mapsHALO[icone][i].PowerSpectrum(pspectrum,multipole,1,true,true);
       for(int ii=0 ; ii<Npower ; ++ii ) powerHALO[ii] += pspectrum[ii]/Ncones;
     }
     

@@ -329,6 +329,16 @@ int main(int arg,char **argv){
                                    + std::to_string(zsources[i]) + "HALO.fits" );
     }
   }
+  // output the maps of first 5 cones
+  for(int icone = 0 ; icone < Ncones ; ++icone){
+    for(int i=0 ; i < zsources.size() ; ++i){
+      if( std::isnan(mapsHALO[icone][i].ave()) ){
+        std::cout << " Halo map has a NAN : cone " << icone << " z "
+        << zsources[i] << std::endl;
+        exit(0);
+      }
+    }
+  }
   
   std::cout << "Writing HALO files..."  << std::endl;
  // caclulate and output power spectra
@@ -338,7 +348,13 @@ int main(int arg,char **argv){
     for(int icone = 0 ; icone < Ncones ; ++icone){
 
       mapsHALO[icone][i].PowerSpectrum(pspectrum,multipole,1,true,true);
-      for(int ii=0 ; ii<Npower ; ++ii ) powerHALO[ii] += pspectrum[ii]/Ncones;
+      for(int ii=0 ; ii<Npower ; ++ii ){
+        if(std::isnan(pspectrum[ii])){
+          std::cout << "Halo power spectrum is NAN : l = " << multipole[ii]
+          << " Ncones = " << Ncones << std::endl;
+        }
+        powerHALO[ii] += pspectrum[ii]/Ncones;
+      }
     }
     
     {

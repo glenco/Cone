@@ -37,7 +37,7 @@ for(label in labels){
   print(file)
   dft <- read.csv(file)
 
-  dft$llP <- dft$l*dft$l*dft$PS/norms[i]
+  dft$llP <- dft$l*dft$l*(dft$PS - dft$PS[nrow(dft)])/norms[i]
   i = i + 1
   dft <- subset(dft,l>90)
 
@@ -47,7 +47,7 @@ for(label in labels){
 }
 
 plt <- ggplot(df,aes(x=l,y=llP,colour=zs)) +
-  scale_x_log10(limit=c(100,1.0e4)) + scale_y_log10() + 
+  scale_x_log10(limit=c(100,1.0e5)) + scale_y_log10() + 
   ggtitle("Power") +
   xlab("l") + ylab( expression( l^2~P(l) ) ) +
   theme(axis.title.x=element_text(face="italic")) +

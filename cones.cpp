@@ -1,3 +1,4 @@
+
 /*
  * multiplane.cpp
  *
@@ -72,7 +73,7 @@ int main(int arg,char **argv){
   //for(double x=0.00100591;x <c*1.01;x *= 1.01){
   //  cout << x << " " << nfwprofile(x,c) << endl;
   //}
->>>>>>> e04099910aff9106aec92c167382ae0078432b23
+
   for(c=1.1;c<21;c *= 1.1){
     dNFW dnfw(c);
     std::cout << c << " " << Utilities::nintegrate<dNFW,double>(dnfw,0.0001,c,1.0e-5)
@@ -207,8 +208,8 @@ int main(int arg,char **argv){
     snap_redshifts.push_back(0.04603);
     }*/
   {
-    snap_filenamesHALO.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
-    snap_filenamesLSS.push_back("Data/dm_particles_snap_007KFth0.20.dat");
+    snap_filenamesHALO.push_back("Data/dm_particles_snap_007KFth0.20.dat");
+    snap_filenamesLSS.push_back("Data/dm_particles_snap_007KFth0.20_lss.dat");
     snap_redshifts.push_back(0.04603);
   }
   /*{

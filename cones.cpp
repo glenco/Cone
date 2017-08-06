@@ -258,7 +258,7 @@ int main(int arg,char **argv){
                                                     ,snap_filenamesLSS
                                                     ,snap_redshifts
                                                     ,BoxLength
-                                                    ,particle_mass);/**/
+                                                    ,particle_mass);
 
   time(&t2);
   std::cout << "time for LSS cones: " << difftime(t2,t1)/60 << " min"
@@ -292,7 +292,7 @@ int main(int arg,char **argv){
     ps_file.close();
     
   }
-
+  /**/
   std::cout << "Starting halo calculation..."  << std::endl;
   time(&t1);
   // This is for halos.  You can also use ightCones::ASCII_XMRRT12

@@ -145,7 +145,7 @@ int main(int arg,char **argv){
    snap_redshifts.push_back(3.0);
    }*/
   
-  {  // From halo and LSS partical catalogs
+  /*{  // From halo and LSS partical catalogs
     
     
     std::vector<std::string> num = {"77","73","64","54","49","44","40","34","29","24","20","15","12","11","10","09","08","07"};
@@ -171,42 +171,19 @@ int main(int arg,char **argv){
     snap_redshifts.push_back(2.145);
     snap_redshifts.push_back(2.484);
     snap_redshifts.push_back(2.891);
-    snap_redshifts.push_back(3.0);
+    //snap_redshifts.push_back(3.0);
     
     assert(snap_redshifts.size() == snap_filenamesHALO.size());
   }/**/
   
   //********************* below are certain test cases without all the input files ******************
-  /*{
-   std::string dir = "Data/dm_particles_snap_0";
-   std::string suffix = ".dat";
-   
-   std::vector<std::string> num = {"77","73"};
-   //std::vector<std::string> num = {"77"};
-   
-   for(int i = 0; i < num.size() ; ++i ) snap_filenames.push_back(dir + num[i] + suffix);
-   
-   snap_redshifts.push_back(0.04603);
-   snap_redshifts.push_back(0.1131);
-   
-   }
-   }/**/
-  /*{
-   snap_filenames.push_back("Data/head.dat");
-   snap_redshifts.push_back(0.04603);
-   }*/
-  
-  
-  /*{
+ 
+  {
    snap_filenamesHALO.push_back(datadir + "dm_particles_snap_007KFth0.20.dat");
    snap_filenamesLSS.push_back(datadir + "dm_particles_snap_007KFth0.20_lss.dat");
    snap_redshifts.push_back(0.04603);
-   }*/
-  /*{
-   snap_filenames.push_back("Data/dm_particles_snap_007KFth0.20.head.dat");
-   snap_redshifts.push_back(0.04603);
-   }/**/
-  //**********************************************************************************
+   } /**/
+   //**********************************************************************************
   
   time_t to,t1,t2;
   time(&to);

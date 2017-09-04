@@ -4,9 +4,11 @@ library(functions)
 #dirs <- c('../Output_lss','../Output_halos')
 #dir = '../Output_lss2'
 
-dir <- "../Output/"
+#dir <- "../Output/"
+dir <- "../OutputTaurus/"
 #zs <- "1.075000"
-zs <- "0.489200"
+#zs <- "0.489200"
+zs <- "2.297000"
 labels = c('PowTOTAL','PowHALO','PowLSS')
 
 df <- data.frame()
@@ -37,7 +39,8 @@ for(label in labels){
   print(file)
   dft <- read.csv(file)
 
-  dft$llP <- dft$l*dft$l*(dft$PS - dft$PS[nrow(dft)])/norms[i]
+  #dft$llP <- dft$l*dft$l*(dft$PS - dft$PS[nrow(dft)])/norms[i]
+  dft$llP <- dft$l*dft$l*dft$PS/norms[i]
   i = i + 1
   dft <- subset(dft,l>90)
 
@@ -62,10 +65,12 @@ plt
 
 MDpower <- NULL
 
-MDpowert <- readVipersBMD('18')
+#MDpowert <- readVipersBMD('18')
+#MDpowert <- readVipersBMD('10')
+MDpowert <- readVipersBMD('1')
 MDpower <- rbind(MDpower,MDpowert)
 
-MDpower$llP <- MDpower$llP/pi/8
+MDpower$llP <- MDpower$llP*2
 
 MDpower$zs <- paste(MDpower$zs,'BigMD')
 
